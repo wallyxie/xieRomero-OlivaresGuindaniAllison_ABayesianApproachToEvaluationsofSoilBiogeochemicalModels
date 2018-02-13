@@ -62,8 +62,8 @@ k_M_f = theta[10];
 u_M = x_r[8];
 
 F_S = k_S_f * C[1];
-F_D = k_M_f * C[2];
-F_M = k_D_f * C[3];
+F_D = k_D_f * C[2];
+F_M = k_M_f * C[3];
 
 dC_dt[1] = x_r[3] + a_DS * F_D + a_M * a_MS * F_M - F_S;
 dC_dt[2] = x_r[4] + a_SD * F_S + a_M * (1 - a_MS) * F_M - u_M * C[2] - F_D;
