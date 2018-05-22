@@ -165,21 +165,21 @@ E_0 <- 0.1
 r_L <- 0.0005
 r_E <- r_L * E_0 / M_0
 
-adriana_datTest <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = 90, D_0 = D_0, M_0 = M_0, E_0 = E_0, r_L = r_L, r_E = r_E)
+AWB_datTest <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = 90, D_0 = D_0, M_0 = M_0, E_0 = E_0, r_L = r_L, r_E = r_E)
 
-adriana_dat1 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_01, D_0 = D_0, M_0 = M_0, E_0 = E_0, r_L = r_L, r_E = r_E)
+AWB_dat1 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_01, D_0 = D_0, M_0 = M_0, E_0 = E_0, r_L = r_L, r_E = r_E)
 
-adriana_dat2 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_02, D_0 = D_0, M_0 = M_0, E_0 = E_0, r_L = r_L, r_E = r_E)
+AWB_dat2 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_02, D_0 = D_0, M_0 = M_0, E_0 = E_0, r_L = r_L, r_E = r_E)
 
-adriana_dat3 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_03, D_0 = D_0, M_0 = M_0, E_0 = E_0, r_L = r_L, r_E = r_E)
+AWB_dat3 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_03, D_0 = D_0, M_0 = M_0, E_0 = E_0, r_L = r_L, r_E = r_E)
 
-adriana_dat4 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_04, D_0 = D_0, M_0 = M_0, E_0 = E_0, r_L = r_L, r_E = r_E)
+AWB_dat4 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_04, D_0 = D_0, M_0 = M_0, E_0 = E_0, r_L = r_L, r_E = r_E)
 
-adriana_dat5 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_05, D_0 = D_0, M_0 = M_0, E_0 = E_0, r_L = r_L, r_E = r_E)
+AWB_dat5 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_05, D_0 = D_0, M_0 = M_0, E_0 = E_0, r_L = r_L, r_E = r_E)
 
-adriana_dat6 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_06, D_0 = D_0, M_0 = M_0, E_0 = E_0, r_L = r_L, r_E = r_E)
+AWB_dat6 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_06, D_0 = D_0, M_0 = M_0, E_0 = E_0, r_L = r_L, r_E = r_E)
 
-adriana_dat7 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_07, D_0 = D_0, M_0 = M_0, E_0 = E_0, r_L = r_L, r_E = r_E)
+AWB_dat7 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_07, D_0 = D_0, M_0 = M_0, E_0 = E_0, r_L = r_L, r_E = r_E)
 
 file_path <- "AWB_adriana_pools5.stan" #Read in Stan model code. Stan file must be in same directory.
 lines <- readLines(file_path, encoding = "ASCII")
@@ -189,7 +189,7 @@ for (n in 1:length(lines)) cat(lines[n],'\n')
 ##EXECUTION##
 #############
 
-AWB_fitTest <- stan("AWB_adriana_pools5.stan", data = adriana_datTest, iter = 500, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 15))
+AWB_fitTest <- stan("AWB_adriana_pools5.stan", data = AWB_datTest, iter = 500, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 15))
 AWB_fitTest_ex = extract(AWB_fitTest)
 AWB_fitTest_ic = calc_ic(AWB_fitTest, AWB_fitTest_ex, 90, D_0, M_0, E_0, filename)
 fit_summary(AWB_fitTest, AWB_fitTest_ex, 90, D_0, M_0, E_0, filename)
@@ -197,7 +197,7 @@ fit_summary(AWB_fitTest, AWB_fitTest_ex, 90, D_0, M_0, E_0, filename)
 bayes_diagnostics(AWB_fitTest, 90, D_0, M_0, E_0, filename)
 plot_fits(AWB_fitTest_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, 90, D_0, M_0, E_0, filename)
 
-AWB_fit1 <- stan("AWB_adriana_pools5.stan", data = adriana_dat1, iter = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 15))
+AWB_fit1 <- stan("AWB_adriana_pools5.stan", data = AWB_dat1, iter = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 15))
 AWB_fit1_ex = extract(AWB_fit1)
 AWB_fit1_ic = calc_ic(AWB_fit1, AWB_fit1_ex, S_01, D_0, M_0, E_0, filename)
 fit_summary(AWB_fit1, AWB_fit1_ex, S_01, D_0, M_0, E_0, filename)
@@ -205,7 +205,7 @@ fit_summary(AWB_fit1, AWB_fit1_ex, S_01, D_0, M_0, E_0, filename)
 bayes_diagnostics(AWB_fit1, S_01, D_0, M_0, E_0, filename)
 plot_fits(AWB_fit1_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_01, D_0, M_0, E_0, filename)
 
-AWB_fit2 <- stan("AWB_adriana_pools5.stan", data = adriana_dat2, iter = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 15))
+AWB_fit2 <- stan("AWB_adriana_pools5.stan", data = AWB_dat2, iter = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 15))
 AWB_fit2_ex = extract(AWB_fit2)
 AWB_fit2_ic = calc_ic(AWB_fit2, AWB_fit2_ex, S_02, D_0, M_0, E_0, filename)
 fit_summary(AWB_fit2, AWB_fit2_ex, S_02, D_0, M_0, E_0, filename)
@@ -213,7 +213,7 @@ fit_summary(AWB_fit2, AWB_fit2_ex, S_02, D_0, M_0, E_0, filename)
 bayes_diagnostics(AWB_fit2, S_02, D_0, M_0, E_0, filename)
 plot_fits(AWB_fit2_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_02, D_0, M_0, E_0, filename)
 
-AWB_fit3 <- stan("AWB_adriana_pools5.stan", data = adriana_dat3, iter = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 15))
+AWB_fit3 <- stan("AWB_adriana_pools5.stan", data = AWB_dat3, iter = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 15))
 AWB_fit3_ex = extract(AWB_fit3)
 AWB_fit3_ic = calc_ic(AWB_fit3, AWB_fit3_ex, S_03, D_0, M_0, E_0, filename)
 fit_summary(AWB_fit3, AWB_fit3_ex, S_03, D_0, M_0, E_0, filename)
@@ -221,7 +221,7 @@ fit_summary(AWB_fit3, AWB_fit3_ex, S_03, D_0, M_0, E_0, filename)
 bayes_diagnostics(AWB_fit3, S_03, D_0, M_0, E_0, filename)
 plot_fits(AWB_fit3_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_03, D_0, M_0, E_0, filename)
 
-AWB_fit4 <- stan("AWB_adriana_pools5.stan", data = adriana_dat4, iter = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 15))
+AWB_fit4 <- stan("AWB_adriana_pools5.stan", data = AWB_dat4, iter = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 15))
 AWB_fit4_ex = extract(AWB_fit4)
 AWB_fit4_ic = calc_ic(AWB_fit4, AWB_fit4_ex, S_04, D_0, M_0, E_0, filename)
 fit_summary(AWB_fit4, AWB_fit4_ex, S_04, D_0, M_0, E_0, filename)
@@ -229,7 +229,7 @@ fit_summary(AWB_fit4, AWB_fit4_ex, S_04, D_0, M_0, E_0, filename)
 bayes_diagnostics(AWB_fit4, S_04, D_0, M_0, E_0, filename)
 plot_fits(AWB_fit4_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_04, D_0, M_0, E_0, filename)
 
-AWB_fit5 <- stan("AWB_adriana_pools5.stan", data = adriana_dat5, iter = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 15))
+AWB_fit5 <- stan("AWB_adriana_pools5.stan", data = AWB_dat5, iter = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 15))
 AWB_fit5_ex = extract(AWB_fit5)
 AWB_fit5_ic = calc_ic(AWB_fit5, AWB_fit5_ex, S_05, D_0, M_0, E_0, filename)
 fit_summary(AWB_fit5, AWB_fit5_ex, S_05, D_0, M_0, E_0, filename)
@@ -237,7 +237,7 @@ fit_summary(AWB_fit5, AWB_fit5_ex, S_05, D_0, M_0, E_0, filename)
 bayes_diagnostics(AWB_fit5, S_05, D_0, M_0, E_0, filename)
 plot_fits(AWB_fit5_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_05, D_0, M_0, E_0, filename)
 
-AWB_fit6 <- stan("AWB_adriana_pools5.stan", data = adriana_dat6, iter = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 15))
+AWB_fit6 <- stan("AWB_adriana_pools5.stan", data = AWB_dat6, iter = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 15))
 AWB_fit6_ex = extract(AWB_fit6)
 AWB_fit6_ic = calc_ic(AWB_fit6, AWB_fit6_ex, S_06, D_0, M_0, E_0, filename)
 fit_summary(AWB_fit6, AWB_fit6_ex, S_06, D_0, M_0, E_0, filename)
@@ -245,7 +245,7 @@ fit_summary(AWB_fit6, AWB_fit6_ex, S_06, D_0, M_0, E_0, filename)
 bayes_diagnostics(AWB_fit6, S_06, D_0, M_0, E_0, filename)
 plot_fits(AWB_fit6_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_06, D_0, M_0, E_0, filename)
 
-AWB_fit7 <- stan("AWB_adriana_pools5.stan", data = adriana_dat7, iter = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 15))
+AWB_fit7 <- stan("AWB_adriana_pools5.stan", data = AWB_dat7, iter = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 15))
 AWB_fit7_ex = extract(AWB_fit7)
 AWB_fit7_ic = calc_ic(AWB_fit7, AWB_fit7_ex, S_07, D_0, M_0, E_0, filename)
 fit_summary(AWB_fit7, AWB_fit7_ex, S_07, D_0, M_0, E_0, filename)
