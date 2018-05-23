@@ -40,7 +40,7 @@ calc_ic = function(stan_fit, stan_fit_ex, S_0, D_0, M_0, filename) {
     p_waic = stan_fit_waic$estimates["p_waic",]
     loo = stan_fit_loo$estimates["looic",]
     p_loo = stan_fit_loo$estimates["p_loo",]
-    sink(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "ic", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".txt", sep = "_"))    
+    sink(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "ic", "S", S_0, "D", D_0, "M", M_0, ".txt", sep = "_"))    
     cat("WAIC = ", waic, "\nLOO = ", loo, "\nLPML = ", LPML, "\np_waic = ", p_waic, "\np_loo = ", p_loo)
     sink()    
     return(c(waic, loo, LPML, p_waic, p_loo))
