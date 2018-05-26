@@ -16,15 +16,15 @@ filename = "AWB_adriana_pools5b"
 #Save summary, sample parameters, and posteriors
 fit_summary = function(stan_fit, stan_fit_ex, S_0, D_0, M_0, E_0, filename) {
     #Posteriors
-    write.csv(stan_fit_ex, file = paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "posteriors", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".csv", sep = "_"))
+    write.csv(stan_fit_ex, file = paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "posteriors", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".csv", sep = "_"))
     #Summary
     stan_fit_sum <- summary(stan_fit)$summary
     stan_fit_sum_write <- stan_fit_sum[c("V_ref", "V_U_ref", "Ea_V", "Ea_VU", "Ea_K", "Ea_KU", "E_C_ref", "m_t", "a_MS", "sigma"),
                                  c("mean", "sd", "2.5%", "50%", "97.5%", "n_eff", "Rhat")]
-    write.csv(stan_fit_sum_write, file = paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "summary", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".csv", sep = "_"))
+    write.csv(stan_fit_sum_write, file = paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "summary", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".csv", sep = "_"))
     #Sampler parameters
     sampler_params <- get_sampler_params(stan_fit, inc_warmup = FALSE) #Access sampler values
-    write.csv(sampler_params, file = paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "sampler_params", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".csv", sep = "_"))
+    write.csv(sampler_params, file = paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "sampler_params", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".csv", sep = "_"))
 }
 
 #IC calculations
@@ -40,7 +40,7 @@ calc_ic = function(stan_fit, stan_fit_ex, S_0, D_0, M_0, E_0, filename) {
     p_waic = stan_fit_waic$estimates["p_waic",]
     loo = stan_fit_loo$estimates["looic",]
     p_loo = stan_fit_loo$estimates["p_loo",]
-    sink(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "ic", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".txt", sep = "_"))    
+    sink(paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "ic", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".txt", sep = "_"))    
     cat("WAIC = ", waic, "\nLOO = ", loo, "\nLPML = ", LPML, "\np_waic = ", p_waic, "\np_loo = ", p_loo)
     sink()    
     return(c(waic, loo, LPML, p_waic, p_loo))
@@ -56,34 +56,34 @@ bayes_diagnostics = function(stan_fit, S_0, D_0, M_0, E_0, filename) {
     #Posterior credible areas
     stan_fit.array <- as.array(stan_fit)
     CI_plot1 <- mcmc_areas(stan_fit.array, pars = c("Ea_V", "Ea_VU", "Ea_K", "Ea_KU"), prob = 0.8, prob_outer = 0.95) + yaxis_text()
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "CI_Ea", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = CI_plot1)
+    ggsave(paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "CI_Ea", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = CI_plot1)
     CI_plot2 <- mcmc_areas(stan_fit.array, pars = c("V_ref", "E_C_ref", "a_MS"), prob = 0.8, prob_outer = 0.95) + yaxis_text()
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "CI_V_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = CI_plot2)
+    ggsave(paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "CI_V_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = CI_plot2)
     CI_plot3 <- mcmc_areas(stan_fit.array, pars = c("V_U_ref"), prob = 0.8, prob_outer = 0.95) + yaxis_text()
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "CI_V_U_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = CI_plot3)
+    ggsave(paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "CI_V_U_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = CI_plot3)
     CI_plot4 <- mcmc_areas(stan_fit.array, pars = c("m_t"), prob = 0.8, prob_outer = 0.95) + yaxis_text()
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "CI_m_t", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = CI_plot4)
+    ggsave(paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "CI_m_t", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = CI_plot4)
     #Traceplot
     traceplot1 <- mcmc_trace(stan_fit.array, pars = c("Ea_V", "Ea_VU", "Ea_K", "Ea_KU")) + yaxis_text()
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "trace_Ea", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = traceplot1)
+    ggsave(paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "trace_Ea", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = traceplot1)
     traceplot2 <- mcmc_trace(stan_fit.array, pars = c("V_ref", "E_C_ref", "a_MS")) + yaxis_text()
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "trace_V_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = traceplot2)
+    ggsave(paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "trace_V_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = traceplot2)
     traceplot3 <- mcmc_trace(stan_fit.array, pars = c("V_U_ref")) + yaxis_text()
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "trace_V_U_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = traceplot3)
+    ggsave(paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "trace_V_U_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = traceplot3)
     traceplot4 <- mcmc_areas(stan_fit.array, pars = c("m_t")) + yaxis_text()
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "trace_m_t", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = traceplot4)
+    ggsave(paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "trace_m_t", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = traceplot4)
     #Autocorrelation
     acf_plot1 <- mcmc_acf(stan_fit.array, pars = c("Ea_V", "Ea_VU", "Ea_K", "Ea_KU")) + yaxis_text()
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "acf_Ea", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = acf_plot1)
+    ggsave(paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "acf_Ea", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = acf_plot1)
     acf_plot2 <- mcmc_acf(stan_fit.array, pars = c("V_ref", "E_C_ref", "a_MS")) + yaxis_text()
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "acf_V_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = acf_plot2)
+    ggsave(paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "acf_V_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = acf_plot2)
     acf_plot3 <- mcmc_acf(stan_fit.array, pars = c("V_U_ref")) + yaxis_text()
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "acf_V_U_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = acf_plot3)
+    ggsave(paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "acf_V_U_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = acf_plot3)
     acf_plot4 <- mcmc_acf(stan_fit.array, pars = c("m_t")) + yaxis_text()
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "acf_m_t", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = acf_plot4)
+    ggsave(paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "acf_m_t", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = acf_plot4)
     #Rhat plot
     stan_fit_coda <- stan2coda(stan_fit)
-    pdf(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "Rhat", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"))
+    pdf(paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "Rhat", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"))
     gelman.plot(stan_fit_coda[,1:9])
     dev.off()
 }
@@ -96,7 +96,7 @@ calc_r <- function(model_vector, data_vector, S_0, D_0, M_0, E_0, filename) {
     ssr_vector <- (data_vector - model_vector) ^ 2
     ssr = sum(ssr_vector)
     r_sq = 1 - (ssr / sst)
-    cat(r_sq, file = paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "r_sq", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".txt", sep = "_"))
+    cat(r_sq, file = paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "r_sq", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".txt", sep = "_"))
     return(r_sq)
 }
 
@@ -126,7 +126,7 @@ plot_fits <- function(stan_fit_ex, N_t, N_p, obs_times, pred_times, data_vector,
     ggtitle("AWB Response Ratio vs. Year")
     post_plot <- post_plot + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
                                    panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.text = element_text(size = 20))
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "post", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = post_plot)    
+    ggsave(paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "post", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = post_plot)    
     #Plotting predictive fit
     df_pre <- data.frame(list(pred_times = pred_times / (24 * 365), CO2_flux_ratios_pred_median = CO2_flux_ratios_pred_median))
     pre_plot <- ggplot(df_pre, aes(x = pred_times)) +
@@ -137,7 +137,7 @@ plot_fits <- function(stan_fit_ex, N_t, N_p, obs_times, pred_times, data_vector,
     ggtitle("AWB Predictive Response Ratio vs. Year")
     pre_plot <- pre_plot + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
                                    panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.text = element_text(size = 20))
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%m"), filename, "pred", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = pre_plot)   
+    ggsave(paste(format(Sys.time(),"%H_%m_%d_%m_%Y"), filename, "pred", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = pre_plot)   
 }
 
 ########
