@@ -16,15 +16,15 @@ filename = "CON_adriana_pools4pb"
 #Save summary, sample parameters, and posteriors
 fit_summary = function(stan_fit, stan_fit_ex, S_0, D_0, M_0, filename) {
     #Posteriors
-    write.csv(stan_fit_ex, file = paste(format(Sys.time(),"%Y_%d_%m_%H_%M"), filename, "posteriors", "S", S_0, "D", D_0, "M", M_0, ".csv", sep = "_"))
+    write.csv(stan_fit_ex, file = paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "posteriors", "S", S_0, "D", D_0, "M", M_0, ".csv", sep = "_"))
     #Summary
     stan_fit_sum <- summary(stan_fit)$summary
     stan_fit_sum_write <- stan_fit_sum[c("Ea_S", "Ea_D", "Ea_M", "a_DS", "a_SD", "a_M", "a_MS", "sigma"),
                                  c("mean", "sd", "2.5%", "50%", "97.5%", "n_eff", "Rhat")]
-    write.csv(stan_fit_sum_write, file = paste(format(Sys.time(),"%Y_%d_%m_%H_%M"), filename, "summary", "S", S_0, "D", D_0, "M", M_0, ".csv", sep = "_"))
+    write.csv(stan_fit_sum_write, file = paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "summary", "S", S_0, "D", D_0, "M", M_0, ".csv", sep = "_"))
     #Sampler parameters
     sampler_params <- get_sampler_params(stan_fit, inc_warmup = FALSE) #Access sampler values
-    write.csv(sampler_params, file = paste(format(Sys.time(),"%Y_%d_%m_%H_%M"), filename, "sampler_params", "S", S_0, "D", D_0, "M", M_0, ".csv", sep = "_"))
+    write.csv(sampler_params, file = paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "sampler_params", "S", S_0, "D", D_0, "M", M_0, ".csv", sep = "_"))
 }
 
 #IC calculations
@@ -40,7 +40,7 @@ calc_ic = function(stan_fit, stan_fit_ex, S_0, D_0, M_0, filename) {
     p_waic = stan_fit_waic$estimates["p_waic",]
     loo = stan_fit_loo$estimates["looic",]
     p_loo = stan_fit_loo$estimates["p_loo",]
-    sink(paste(format(Sys.time(),"%Y_%d_%m_%H_%M"), filename, "ic", "S", S_0, "D", D_0, "M", M_0, ".txt", sep = "_"))    
+    sink(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "ic", "S", S_0, "D", D_0, "M", M_0, ".txt", sep = "_"))    
     cat("WAIC = ", waic, "\nLOO = ", loo, "\nLPML = ", LPML, "\np_waic = ", p_waic, "\np_loo = ", p_loo)
     sink()    
     return(c(waic, loo, LPML, p_waic, p_loo))
@@ -56,22 +56,22 @@ bayes_diagnostics = function(stan_fit, S_0, D_0, M_0, filename) {
     #Posterior credible areas
     stan_fit.array <- as.array(stan_fit)
     CI_plot1 <- mcmc_areas(stan_fit.array, pars = c("Ea_S", "Ea_D", "Ea_M"), prob = 0.8, prob_outer = 0.95) + yaxis_text() + theme(axis.text = element_text(size = 20))
-    ggsave(paste(format(Sys.time(),"%Y_%d_%m_%H_%M"), filename, "CI_Ea", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = CI_plot1)
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "CI_Ea", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = CI_plot1)
     CI_plot2 <- mcmc_areas(stan_fit.array, pars = c("a_DS", "a_SD", "a_M", "a_MS"), prob = 0.8, prob_outer = 0.95) + yaxis_text() + theme(axis.text = element_text(size = 20))
-    ggsave(paste(format(Sys.time(),"%Y_%d_%m_%H_%M"), filename, "CI_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = CI_plot2)
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "CI_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = CI_plot2)
     #Traceplot
     traceplot1 <- mcmc_trace(stan_fit.array, pars = c("Ea_S", "Ea_D", "Ea_M")) + yaxis_text() + theme(axis.text = element_text(size = 20))
-    ggsave(paste(format(Sys.time(),"%Y_%d_%m_%H_%M"), filename, "trace_Ea", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = traceplot1)
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_Ea", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = traceplot1)
     traceplot2 <- mcmc_trace(stan_fit.array, pars = c("a_DS", "a_SD", "a_M", "a_MS")) + yaxis_text() + theme(axis.text = element_text(size = 20))
-    ggsave(paste(format(Sys.time(),"%Y_%d_%m_%H_%M"), filename, "trace_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = traceplot2)
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = traceplot2)
     #Autocorrelation
     acf_plot1 <- mcmc_acf(stan_fit.array, pars = c("Ea_S", "Ea_D", "Ea_M")) + yaxis_text() + theme(axis.text = element_text(size = 20))
-    ggsave(paste(format(Sys.time(),"%Y_%d_%m_%H_%M"), filename, "acf_Ea", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = acf_plot1)
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "acf_Ea", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = acf_plot1)
     acf_plot2 <- mcmc_acf(stan_fit.array, pars = c("a_DS", "a_SD", "a_M", "a_MS")) + yaxis_text() + theme(axis.text = element_text(size = 20))
-    ggsave(paste(format(Sys.time(),"%Y_%d_%m_%H_%M"), filename, "acf_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = acf_plot2)
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "acf_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = acf_plot2)
     #Rhat plot
     stan_fit_coda <- stan2coda(stan_fit)
-    pdf(paste(format(Sys.time(),"%Y_%d_%m_%H_%M"), filename, "Rhat", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"))
+    pdf(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "Rhat", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"))
     gelman.plot(stan_fit_coda[,1:8])
     dev.off()
 }
@@ -84,7 +84,7 @@ calc_r <- function(model_vector, data_vector, S_0, D_0, M_0, filename) {
     ssr_vector <- (data_vector - model_vector) ^ 2
     ssr = sum(ssr_vector)
     r_sq = 1 - (ssr / sst)
-    cat(r_sq, file = paste(format(Sys.time(),"%Y_%d_%m_%H_%M"), filename, "r_sq", "S", S_0, "D", D_0, "M", M_0, ".txt", sep = "_"))
+    cat(r_sq, file = paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "r_sq", "S", S_0, "D", D_0, "M", M_0, ".txt", sep = "_"))
     return(r_sq)
 }
 
@@ -114,7 +114,7 @@ plot_fits <- function(stan_fit_ex, N_t, N_p, obs_times, pred_times, data_vector,
     ggtitle("CON Response Ratio vs. Year")
     post_plot <- post_plot + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
                                    panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.text = element_text(size = 20)) + scale_x_continuous(limits = c(0, 12.5)) + scale_y_continuous(limits = c(0.8, 1.6))
-    ggsave(paste(format(Sys.time(),"%Y_%d_%m_%H_%M"), filename, "post", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = post_plot)    
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "post", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = post_plot)    
     #Plotting predictive fit
     df_pre <- data.frame(list(pred_times = pred_times / (24 * 365), CO2_flux_ratios_pred_median = CO2_flux_ratios_pred_median))
     pre_plot <- ggplot(df_pre, aes(x = pred_times)) +
@@ -125,7 +125,7 @@ plot_fits <- function(stan_fit_ex, N_t, N_p, obs_times, pred_times, data_vector,
     ggtitle("CON Predictive Response Ratio vs. Year")
     pre_plot <- pre_plot + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
                                    panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.text = element_text(size = 20)) + scale_x_continuous(limits = c(0, 60)) + scale_y_continuous(limits = c(0.9, 1.5))
-    ggsave(paste(format(Sys.time(),"%Y_%d_%m_%H_%M"), filename, "pred", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = pre_plot)   
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pred", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = pre_plot)   
 }
 
 ########
