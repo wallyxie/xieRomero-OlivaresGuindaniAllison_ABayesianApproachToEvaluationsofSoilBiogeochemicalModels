@@ -113,7 +113,7 @@ plot_fits <- function(stan_fit_ex, N_t, N_p, obs_times, pred_times, data_vector,
          y = "Response Ratio") +
     ggtitle("CON Response Ratio vs. Year")
     post_plot <- post_plot + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                                   panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.text = element_text(size = 16), axis.title = element_text(size = 20)) + coord_cartesian(xlim = c(0, 12.5), ylim = c(0.8, 1.6))
+                                   panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.text = element_text(size = 16), axis.title = element_text(size = 20)) + coord_cartesian(xlim = c(0, 12.5), ylim = c(0.7, 1.6))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "post", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = post_plot)    
     #Plotting predictive fit
     df_pre <- data.frame(list(pred_times = pred_times / (24 * 365), CO2_flux_ratios_pred_median = CO2_flux_ratios_pred_median))
@@ -124,7 +124,7 @@ plot_fits <- function(stan_fit_ex, N_t, N_p, obs_times, pred_times, data_vector,
          y = "Response Ratio") +
     ggtitle("CON Predictive Response Ratio vs. Year")
     pre_plot <- pre_plot + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                                   panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.text = element_text(size = 16), axis.title = element_text(size = 20)) + coord_cartesian(xlim = c(0, 60), ylim = c(0.8, 1.6))
+                                   panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.text = element_text(size = 16), axis.title = element_text(size = 20)) + coord_cartesian(xlim = c(0, 60), ylim = c(0.7, 1.6))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pred", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = pre_plot)   
 }
 
