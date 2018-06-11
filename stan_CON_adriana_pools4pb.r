@@ -8,6 +8,7 @@ rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
 filename = "CON_adriana_pools4pb"
+color_scheme_set("viridisA")
 
 #############
 ##FUNCTIONS##
@@ -59,10 +60,15 @@ bayes_diagnostics = function(stan_fit, S_0, D_0, M_0, filename) {
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "CI_Ea", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = CI_plot1)
     CI_plot2 <- mcmc_areas(stan_fit.array, pars = c("a_DS", "a_SD", "a_M", "a_MS"), prob = 0.8, prob_outer = 0.95) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "CI_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = CI_plot2)
+    #Pairs
+    pairsplot1 <- pairs(stan_fit.array, pars = c("Ea_S", "Ea_D", "Ea_M")) + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pairs_Ea", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = pairsplot1)
+    pairsplot2 <- pairs(stan_fit.array, pars = c("a_DS", "a_SD", "a_M", "a_MS")) + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pairs_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = pairsplot2)
     #Traceplot
-    traceplot1 <- mcmc_trace(stan_fit.array, pars = c("Ea_S", "Ea_D", "Ea_M")) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
+    traceplot1 <- rstan::traceplot(stan_fit.array, pars = c("Ea_S", "Ea_D", "Ea_M")) + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_Ea", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = traceplot1)
-    traceplot2 <- mcmc_trace(stan_fit.array, pars = c("a_DS", "a_SD", "a_M", "a_MS")) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
+    traceplot2 <- rstan::traceplot(stan_fit.array, pars = c("a_DS", "a_SD", "a_M", "a_MS")) + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = traceplot2)
     #Autocorrelation
     acf_plot1 <- mcmc_acf(stan_fit.array, pars = c("Ea_S", "Ea_D", "Ea_M")) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
@@ -176,49 +182,49 @@ for (n in 1:length(lines)) cat(lines[n],'\n')
 ##EXECUTION##
 #############
 
-CON_fit1 <- stan("CON_adriana_pools4p1.stan", data = CON_dat1, iter = 80000, warmup = 30000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.999, stepsize = 0.001, max_treedepth = 15))
+CON_fit1 <- stan("CON_adriana_pools4p1.stan", data = CON_dat1, iter = 50000, warmup = 10000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
 CON_fit1_ex = extract(CON_fit1)
 CON_fit1_ic = calc_ic(CON_fit1, CON_fit1_ex, S_01, D_0, M_0, filename)
 fit_summary(CON_fit1, CON_fit1_ex, S_01, D_0, M_0, filename)
 bayes_diagnostics(CON_fit1, S_01, D_0, M_0, filename)
 plot_fits(CON_fit1_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_01, D_0, M_0, filename)
 
-CON_fit2 <- stan("CON_adriana_pools4p1.stan", data = CON_dat2, iter = 80000, warmup = 30000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.999, stepsize = 0.001, max_treedepth = 15))
+CON_fit2 <- stan("CON_adriana_pools4p1.stan", data = CON_dat2, iter = 50000, warmup = 10000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
 CON_fit2_ex = extract(CON_fit2)
 CON_fit2_ic = calc_ic(CON_fit2, CON_fit2_ex, S_02, D_0, M_0, filename)
 fit_summary(CON_fit2, CON_fit2_ex, S_02, D_0, M_0, filename)
 bayes_diagnostics(CON_fit2, S_02, D_0, M_0, filename)
 plot_fits(CON_fit2_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_02, D_0, M_0, filename)
 
-CON_fit3 <- stan("CON_adriana_pools4p1.stan", data = CON_dat3, iter = 80000, warmup = 30000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.999, stepsize = 0.001, max_treedepth = 15))
+CON_fit3 <- stan("CON_adriana_pools4p1.stan", data = CON_dat3, iter = 50000, warmup = 10000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
 CON_fit3_ex = extract(CON_fit3)
 CON_fit3_ic = calc_ic(CON_fit3, CON_fit3_ex, S_03, D_0, M_0, filename)
 fit_summary(CON_fit3, CON_fit3_ex, S_03, D_0, M_0, filename)
 bayes_diagnostics(CON_fit3, S_03, D_0, M_0, filename)
 plot_fits(CON_fit3_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_03, D_0, M_0, filename)
 
-CON_fit4 <- stan("CON_adriana_pools4p1.stan", data = CON_dat4, iter = 80000, warmup = 30000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.999, stepsize = 0.001, max_treedepth = 15))
+CON_fit4 <- stan("CON_adriana_pools4p1.stan", data = CON_dat4, iter = 50000, warmup = 10000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
 CON_fit4_ex = extract(CON_fit4)
 CON_fit4_ic = calc_ic(CON_fit4, CON_fit4_ex, S_04, D_0, M_0, filename)
 fit_summary(CON_fit4, CON_fit4_ex, S_04, D_0, M_0, filename)
 bayes_diagnostics(CON_fit4, S_04, D_0, M_0, filename)
 plot_fits(CON_fit4_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_04, D_0, M_0, filename)
 
-CON_fit5 <- stan("CON_adriana_pools4p1.stan", data = CON_dat5, iter = 80000, warmup = 30000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.999, stepsize = 0.001, max_treedepth = 15))
+CON_fit5 <- stan("CON_adriana_pools4p1.stan", data = CON_dat5, iter = 50000, warmup = 10000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
 CON_fit5_ex = extract(CON_fit5)
 CON_fit5_ic = calc_ic(CON_fit5, CON_fit5_ex, S_05, D_0, M_0, filename)
 fit_summary(CON_fit5, CON_fit5_ex, S_05, D_0, M_0, filename)
 bayes_diagnostics(CON_fit5, S_05, D_0, M_0, filename)
 plot_fits(CON_fit5_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_05, D_0, M_0, filename)
 
-CON_fit6 <- stan("CON_adriana_pools4p1.stan", data = CON_dat6, iter = 80000, warmup = 30000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.999, stepsize = 0.001, max_treedepth = 15))
+CON_fit6 <- stan("CON_adriana_pools4p1.stan", data = CON_dat6, iter = 50000, warmup = 10000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
 CON_fit6_ex = extract(CON_fit6)
 CON_fit6_ic = calc_ic(CON_fit6, CON_fit6_ex, S_06, D_0, M_0, filename)
 fit_summary(CON_fit6, CON_fit6_ex, S_06, D_0, M_0, filename)
 bayes_diagnostics(CON_fit6, S_06, D_0, M_0, filename)
 plot_fits(CON_fit6_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_06, D_0, M_0, filename)
 
-CON_fit7 <- stan("CON_adriana_pools4p1.stan", data = CON_dat7, iter = 80000, warmup = 30000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.999, stepsize = 0.001, max_treedepth = 15))
+CON_fit7 <- stan("CON_adriana_pools4p1.stan", data = CON_dat7, iter = 50000, warmup = 10000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
 CON_fit7_ex = extract(CON_fit7)
 CON_fit7_ic = calc_ic(CON_fit7, CON_fit7_ex, S_07, D_0, M_0, filename)
 fit_summary(CON_fit7, CON_fit7_ex, S_07, D_0, M_0, filename)

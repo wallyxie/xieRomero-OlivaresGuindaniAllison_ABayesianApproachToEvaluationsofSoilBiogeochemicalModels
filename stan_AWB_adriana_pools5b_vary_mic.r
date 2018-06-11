@@ -8,6 +8,7 @@ rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
 filename = "AWB_adriana_pools5b"
+color_scheme_set("viridisA")
 
 #############
 ##FUNCTIONS##
@@ -63,14 +64,23 @@ bayes_diagnostics = function(stan_fit, S_0, D_0, M_0, E_0, filename) {
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "CI_V_U_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = CI_plot3)
     CI_plot4 <- mcmc_areas(stan_fit.array, pars = c("m_t"), prob = 0.8, prob_outer = 0.95) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "CI_m_t", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = CI_plot4)
+    #Pairs
+    pairsplot1 <- pairs(stan_fit.array, pars = c("Ea_V", "Ea_VU", "Ea_K", "Ea_KU")) + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pairs_Ea", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = pairsplot1)
+    pairsplot2 <- pairs(stan_fit.array, pars = c("V_ref", "E_C_ref", "a_MS")) + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pairs_V_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = pairsplot2)
+    pairsplot3 <- pairs(stan_fit.array, pars = c("V_U_ref")) + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pairs_V_U_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = pairsplot3)
+    pairsplot4 <- pairs(stan_fit.array, pars = c("m_t")) + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pairs_m_t", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = pairsplot4)
     #Traceplot
-    traceplot1 <- mcmc_trace(stan_fit.array, pars = c("Ea_V", "Ea_VU", "Ea_K", "Ea_KU")) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
+    traceplot1 <- rstan::traceplot(stan_fit.array, pars = c("Ea_V", "Ea_VU", "Ea_K", "Ea_KU")) + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_Ea", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = traceplot1)
-    traceplot2 <- mcmc_trace(stan_fit.array, pars = c("V_ref", "E_C_ref", "a_MS")) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
+    traceplot2 <- rstan::traceplot(stan_fit.array, pars = c("V_ref", "E_C_ref", "a_MS")) + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_V_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = traceplot2)
-    traceplot3 <- mcmc_trace(stan_fit.array, pars = c("V_U_ref")) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
+    traceplot3 <- rstan::traceplot(stan_fit.array, pars = c("V_U_ref")) + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_V_U_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = traceplot3)
-    traceplot4 <- mcmc_areas(stan_fit.array, pars = c("m_t")) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
+    traceplot4 <- rstan::traceplot(stan_fit.array, pars = c("m_t")) + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_m_t", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = traceplot4)
     #Autocorrelation
     acf_plot1 <- mcmc_acf(stan_fit.array, pars = c("Ea_V", "Ea_VU", "Ea_K", "Ea_KU")) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
@@ -193,35 +203,35 @@ for (n in 1:length(lines)) cat(lines[n],'\n')
 ##EXECUTION##
 #############
 
-AWB_fit1 <- stan("AWB_adriana_pools5.stan", data = AWB_dat1, iter = 80000, warmup = 30000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.999, stepsize = 0.001, max_treedepth = 15))
+AWB_fit1 <- stan("AWB_adriana_pools5.stan", data = AWB_dat1, iter = 50000, warmup = 10000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
 AWB_fit1_ex = extract(AWB_fit1)
 AWB_fit1_ic = calc_ic(AWB_fit1, AWB_fit1_ex, S_0, D_0, M_01, E_0, filename)
 fit_summary(AWB_fit1, AWB_fit1_ex, S_0, D_0, M_01, E_0, filename)
 bayes_diagnostics(AWB_fit1, S_0, D_0, M_01, E_0, filename)
 plot_fits(AWB_fit1_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_0, D_0, M_01, E_0, filename)
 
-AWB_fit3 <- stan("AWB_adriana_pools5.stan", data = AWB_dat3, iter = 80000, warmup = 30000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.999, stepsize = 0.001, max_treedepth = 15))
+AWB_fit3 <- stan("AWB_adriana_pools5.stan", data = AWB_dat3, iter = 50000, warmup = 10000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
 AWB_fit3_ex = extract(AWB_fit3)
 AWB_fit3_ic = calc_ic(AWB_fit3, AWB_fit3_ex, S_0, D_0, M_03, E_0, filename)
 fit_summary(AWB_fit3, AWB_fit3_ex, S_0, D_0, M_03, E_0, filename)
 bayes_diagnostics(AWB_fit3, S_0, D_0, M_03, E_0, filename)
 plot_fits(AWB_fit3_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_0, D_0, M_03, E_0, filename)
 
-AWB_fit4 <- stan("AWB_adriana_pools5.stan", data = AWB_dat4, iter = 80000, warmup = 30000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.999, stepsize = 0.001, max_treedepth = 15))
+AWB_fit4 <- stan("AWB_adriana_pools5.stan", data = AWB_dat4, iter = 50000, warmup = 10000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
 AWB_fit4_ex = extract(AWB_fit4)
 AWB_fit4_ic = calc_ic(AWB_fit4, AWB_fit4_ex, S_0, D_0, M_04, E_0, filename)
 fit_summary(AWB_fit4, AWB_fit4_ex, S_0, D_0, M_04, E_0, filename)
 bayes_diagnostics(AWB_fit4, S_0, D_0, M_04, E_0, filename)
 plot_fits(AWB_fit4_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_0, D_0, M_04, E_0, filename)
 
-AWB_fit5 <- stan("AWB_adriana_pools5.stan", data = AWB_dat5, iter = 80000, warmup = 30000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.999, stepsize = 0.001, max_treedepth = 15))
+AWB_fit5 <- stan("AWB_adriana_pools5.stan", data = AWB_dat5, iter = 50000, warmup = 10000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
 AWB_fit5_ex = extract(AWB_fit5)
 AWB_fit5_ic = calc_ic(AWB_fit5, AWB_fit5_ex, S_0, D_0, M_05, E_0, filename)
 fit_summary(AWB_fit5, AWB_fit5_ex, S_0, D_0, M_05, E_0, filename)
 bayes_diagnostics(AWB_fit5, S_0, D_0, M_05, E_0, filename)
 plot_fits(AWB_fit5_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_0, D_0, M_05, E_0, filename)
 
-AWB_fit6 <- stan("AWB_adriana_pools5.stan", data = AWB_dat6, iter = 80000, warmup = 30000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.999, stepsize = 0.001, max_treedepth = 15))
+AWB_fit6 <- stan("AWB_adriana_pools5.stan", data = AWB_dat6, iter = 50000, warmup = 10000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
 AWB_fit6_ex = extract(AWB_fit6)
 AWB_fit6_ic = calc_ic(AWB_fit6, AWB_fit6_ex, S_0, D_0, M_06, E_0, filename)
 fit_summary(AWB_fit6, AWB_fit6_ex, S_0, D_0, M_06, E_0, filename)
