@@ -23,6 +23,9 @@ fit_summary = function(stan_fit, stan_fit_ex, S_0, D_0, M_0, E_0, filename) {
     stan_fit_sum_write <- stan_fit_sum[c("V_ref", "V_U_ref", "Ea_V", "Ea_VU", "Ea_K", "Ea_KU", "E_C_ref", "m_t", "a_MS", "sigma"),
                                  c("mean", "sd", "2.5%", "50%", "97.5%", "n_eff", "Rhat")]
     write.csv(stan_fit_sum_write, file = paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "summary", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".csv", sep = "_"))
+    #Divergent Transitions
+    div_trans <- sum(nuts_params(stan_fit, pars = "divergent__")$Value)
+    write.csv(div_trans, file = paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "div_trans", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".csv", sep = "_"))
     #Sampler parameters
     sampler_params <- get_sampler_params(stan_fit, inc_warmup = FALSE) #Access sampler values
     write.csv(sampler_params, file = paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "sampler_params", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".csv", sep = "_"))
@@ -201,12 +204,12 @@ for (n in 1:length(lines)) cat(lines[n],'\n')
 ##EXECUTION##
 #############
 
-# AWB_fitTest <- stan("AWB_adriana_pools5.stan", data = AWB_datTest, iter = 1000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
-# AWB_fitTest_ex = extract(AWB_fitTest)
-# AWB_fitTest_ic = calc_ic(AWB_fitTest, AWB_fitTest_ex, 90, D_0, M_0, E_0, filename)
-# fit_summary(AWB_fitTest, AWB_fitTest_ex, 90, D_0, M_0, E_0, filename)
-# bayes_diagnostics(AWB_fitTest, 90, D_0, M_0, E_0, filename)
-# plot_fits(AWB_fitTest_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, 90, D_0, M_0, E_0, filename)
+AWB_fitTest <- stan("AWB_adriana_pools5.stan", data = AWB_datTest, iter = 1000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
+AWB_fitTest_ex = extract(AWB_fitTest)
+AWB_fitTest_ic = calc_ic(AWB_fitTest, AWB_fitTest_ex, 90, D_0, M_0, E_0, filename)
+fit_summary(AWB_fitTest, AWB_fitTest_ex, 90, D_0, M_0, E_0, filename)
+bayes_diagnostics(AWB_fitTest, 90, D_0, M_0, E_0, filename)
+plot_fits(AWB_fitTest_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, 90, D_0, M_0, E_0, filename)
 
 AWB_fit1 <- stan("AWB_adriana_pools5.stan", data = AWB_dat1, iter = 50000, warmup = 10000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
 AWB_fit1_ex = extract(AWB_fit1)

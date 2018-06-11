@@ -23,6 +23,9 @@ fit_summary = function(stan_fit, stan_fit_ex, S_0, D_0, M_0, E_0, filename) {
     stan_fit_sum_write <- stan_fit_sum[c("V_ref", "V_U_ref", "Ea_V", "Ea_VU", "Ea_K", "Ea_KU", "E_C_ref", "m_t", "a_MS", "sigma"),
                                  c("mean", "sd", "2.5%", "50%", "97.5%", "n_eff", "Rhat")]
     write.csv(stan_fit_sum_write, file = paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "summary", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".csv", sep = "_"))
+    #Divergent Transitions
+    div_trans <- sum(nuts_params(stan_fit, pars = "divergent__")$Value)
+    write.csv(div_trans, file = paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "div_trans", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".csv", sep = "_"))
     #Sampler parameters
     sampler_params <- get_sampler_params(stan_fit, inc_warmup = FALSE) #Access sampler values
     write.csv(sampler_params, file = paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "sampler_params", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".csv", sep = "_"))
