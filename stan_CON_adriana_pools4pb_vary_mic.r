@@ -64,7 +64,7 @@ bayes_diagnostics = function(stan_fit, S_0, D_0, M_0, filename) {
     CI_plot2 <- mcmc_areas(stan_fit.array, pars = c("a_DS", "a_SD", "a_M", "a_MS"), prob = 0.8, prob_outer = 0.95) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "CI_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = CI_plot2)
     #Pairs
-    pairsplot1 <- mcmc_pairs(stan_fit.array, diag_fun = "dens", list(size = 1.5))
+    pairsplot1 <- mcmc_pairs(stan_fit.array, diag_fun = "dens")
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pairs", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = pairsplot1)
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pairs", "S", S_0, "D", D_0, "M", M_0, ".png", sep = "_"), plot = pairsplot1)
     #Traceplot
