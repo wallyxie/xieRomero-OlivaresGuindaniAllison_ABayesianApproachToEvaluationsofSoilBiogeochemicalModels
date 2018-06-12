@@ -64,15 +64,17 @@ bayes_diagnostics = function(stan_fit, S_0, D_0, M_0, filename) {
     CI_plot2 <- mcmc_areas(stan_fit.array, pars = c("a_DS", "a_SD", "a_M", "a_MS"), prob = 0.8, prob_outer = 0.95) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "CI_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = CI_plot2)
     #Pairs
-    pairsplot1 <- pairs(stan_fit, pars = c("Ea_S", "Ea_D", "Ea_M"), nrow = 3)
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pairs_Ea", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = pairsplot1)
-    pairsplot2 <- pairs(stan_fit, pars = c("a_DS", "a_SD", "a_M", "a_MS"), nrow = 4)
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pairs_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = pairsplot2)
+    pairsplot1 <- mcmc_pairs(stan_fit.array, diag_fun = "dens", list(size = 1.5))
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pairs", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = pairsplot1)
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pairs", "S", S_0, "D", D_0, "M", M_0, ".png", sep = "_"), plot = pairsplot1)
     #Traceplot
-    traceplot1 <- rstan::traceplot(stan_fit, pars = c("Ea_S", "Ea_D", "Ea_M"))
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_Ea", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = traceplot1)
-    traceplot2 <- rstan::traceplot(stan_fit, pars = c("a_DS", "a_SD", "a_M", "a_MS"))
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = traceplot2)
+    # traceplot1 <- rstan::traceplot(stan_fit, pars = c("Ea_S", "Ea_D", "Ea_M"))
+    # ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_Ea", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = traceplot1)
+    # traceplot2 <- rstan::traceplot(stan_fit, pars = c("a_DS", "a_SD", "a_M", "a_MS"))
+    # ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = traceplot2)
+    traceplot1 <- mcmc_trace(stan_fit.array, facet_args = list(ncol = 1, strip.position = "left"))
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = traceplot1)
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace", "S", S_0, "D", D_0, "M", M_0, ".png", sep = "_"), plot = traceplot1)
     #Autocorrelation
     acf_plot1 <- mcmc_acf(stan_fit.array, pars = c("Ea_S", "Ea_D", "Ea_M")) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "acf_Ea", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = acf_plot1)
@@ -163,6 +165,8 @@ M_0 <- 2
 u_M <- 0.002
 k_M_ref <- u_M * D_0 / M_0
 
+CON_datTest <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = 90, D_0 = D_0, M_0 = M_0, u_M = u_M, k_M_ref = k_M_ref)
+
 CON_dat1 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_01, D_0 = D_0, M_0 = M_0, u_M = u_M, k_M_ref = k_M_ref)
 
 CON_dat2 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_02, D_0 = D_0, M_0 = M_0, u_M = u_M, k_M_ref = k_M_ref)
@@ -184,6 +188,13 @@ for (n in 1:length(lines)) cat(lines[n],'\n')
 #############
 ##EXECUTION##
 #############
+
+CON_fitTest <- stan("CON_adriana_pools4p1.stan", data = CON_dat1, iter = 40000, warmup = 15000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
+CON_fitTest_ex = extract(CON_fitTest)
+CON_fitTest_ic = calc_ic(CON_fitTest, CON_fitTest_ex, 90, D_0, M_0, filename)
+fit_summary(CON_fitTest, CON_fitTest_ex, 90, D_0, M_0, filename)
+bayes_diagnostics(CON_fitTest, 90, D_0, M_0, filename)
+plot_fits(CON_fitTest_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, 90, D_0, M_0, filename)
 
 CON_fit1 <- stan("CON_adriana_pools4p1.stan", data = CON_dat1, iter = 40000, warmup = 15000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
 CON_fit1_ex = extract(CON_fit1)

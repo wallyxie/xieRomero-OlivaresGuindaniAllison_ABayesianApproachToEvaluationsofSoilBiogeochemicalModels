@@ -64,15 +64,17 @@ bayes_diagnostics = function(stan_fit, S_0, D_0, M_0, filename) {
     CI_plot2 <- mcmc_areas(stan_fit.array, pars = c("a_DS", "a_SD", "a_M", "a_MS"), prob = 0.8, prob_outer = 0.95) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "CI_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = CI_plot2)
     #Pairs
-    pairsplot1 <- pairs(stan_fit, pars = c("Ea_S", "Ea_D", "Ea_M"), nrow = 3)
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pairs_Ea", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = pairsplot1)
-    pairsplot2 <- pairs(stan_fit, pars = c("a_DS", "a_SD", "a_M", "a_MS"), nrow = 4)
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pairs_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = pairsplot2)
+    pairsplot1 <- mcmc_pairs(stan_fit.array, diag_fun = "dens", list(size = 1.5))
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pairs", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = pairsplot1)
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pairs", "S", S_0, "D", D_0, "M", M_0, ".png", sep = "_"), plot = pairsplot1)
     #Traceplot
-    traceplot1 <- rstan::traceplot(stan_fit, pars = c("Ea_S", "Ea_D", "Ea_M"))
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_Ea", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = traceplot1)
-    traceplot2 <- rstan::traceplot(stan_fit, pars = c("a_DS", "a_SD", "a_M", "a_MS"))
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = traceplot2)
+    # traceplot1 <- rstan::traceplot(stan_fit, pars = c("Ea_S", "Ea_D", "Ea_M"))
+    # ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_Ea", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = traceplot1)
+    # traceplot2 <- rstan::traceplot(stan_fit, pars = c("a_DS", "a_SD", "a_M", "a_MS"))
+    # ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_a", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = traceplot2)
+    traceplot1 <- mcmc_trace(stan_fit.array, facet_args = list(ncol = 1, strip.position = "left"))
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = traceplot1)
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace", "S", S_0, "D", D_0, "M", M_0, ".png", sep = "_"), plot = traceplot1)
     #Autocorrelation
     acf_plot1 <- mcmc_acf(stan_fit.array, pars = c("Ea_S", "Ea_D", "Ea_M")) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "acf_Ea", "S", S_0, "D", D_0, "M", M_0, ".pdf", sep = "_"), plot = acf_plot1)
@@ -167,7 +169,6 @@ k_M_ref3 <- u_M * D_0 / M_03
 k_M_ref4 <- u_M * D_0 / M_04
 k_M_ref5 <- u_M * D_0 / M_05
 k_M_ref6 <- u_M * D_0 / M_06
-
 
 CON_dat1 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_0, D_0 = D_0, M_0 = M_01, u_M = u_M, k_M_ref = k_M_ref1)
 
