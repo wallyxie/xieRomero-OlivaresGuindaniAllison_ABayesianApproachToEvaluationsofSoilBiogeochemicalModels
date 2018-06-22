@@ -57,8 +57,18 @@ stan2coda <- function(fit) {
 
 #Diagnostics including posterior, traceplot, autocorrelation, and Rhat. Specific to AWB because of parameters. Cannot copy-pate to other models
 bayes_diagnostics = function(stan_fit, S_0, D_0, M_0, E_0, filename) {
-    #Posterior credible areas
     stan_fit.array <- as.array(stan_fit)
+    stan_fit.np <- nuts_params(stan_fit)
+    stan_fit.lp <- log_posterior(stan_fit)
+    #Divergent transitions plots
+    mcmc_ND <- mcmc_nuts_divergence(stan_fit.np, stan_fit.lp)
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "mcmc_ND", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = mcmc_ND)
+    mcmc_PC <- mcmc_parcoord(stan_fit.array, np = stan_fit.np)
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "mcmc_PC", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = mcmc_PC)
+    #MCMC NUTS energy
+    mcmc_ne <- mcmc_nuts_energy(stan_fit.np)
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "mcmc_ne", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = mcmc_ne) 
+    #Posterior credible areas
     CI_plot1 <- mcmc_areas(stan_fit.array, pars = c("Ea_V", "Ea_VU", "Ea_K", "Ea_KU"), prob = 0.8, prob_outer = 0.95) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "CI_Ea", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = CI_plot1)
     CI_plot2 <- mcmc_areas(stan_fit.array, pars = c("V_ref", "E_C_ref", "a_MS"), prob = 0.8, prob_outer = 0.95) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
@@ -88,17 +98,17 @@ bayes_diagnostics = function(stan_fit, S_0, D_0, M_0, E_0, filename) {
     # ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_V_U_ref", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = traceplot3)
     # traceplot4 <- rstan::traceplot(stan_fit, pars = c("m_t"))
     # ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_m_t", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = traceplot4)
-    trace_plot1 <- mcmc_trace(stan_fit.array, pars = c("Ea_V", "Ea_VU", "Ea_K", "Ea_KU"), facet_args = list(ncol = 1, strip.position = "left")) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
+    trace_plot1 <- mcmc_trace(stan_fit.array, pars = c("Ea_V", "Ea_VU", "Ea_K", "Ea_KU"), np = stan_fit.np, facet_args = list(ncol = 1, strip.position = "left")) + xlab("Post-warmup iteration") + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_Ea", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = trace_plot1)
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_Ea", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".png", sep = "_"), plot = trace_plot1)
-    trace_plot2 <- mcmc_trace(stan_fit.array, pars = c("V_ref", "E_C_ref", "a_MS", "V_U_ref", "m_t"), facet_args = list(ncol = 1, strip.position = "left")) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
+    trace_plot2 <- mcmc_trace(stan_fit.array, pars = c("V_ref", "E_C_ref", "a_MS", "V_U_ref", "m_t"), np = stan_fit.np, facet_args = list(ncol = 1, strip.position = "left")) + xlab("Post-warmup iteration") + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_misc", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = trace_plot2)
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_misc", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".png", sep = "_"), plot = trace_plot2)
     #Autocorrelation
     acf_plot1 <- mcmc_acf(stan_fit.array, pars = c("Ea_V", "Ea_VU", "Ea_K", "Ea_KU")) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "acf_Ea", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = acf_plot1)
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "acf1", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = acf_plot1)
     acf_plot2 <- mcmc_acf(stan_fit.array, pars = c("V_ref", "E_C_ref", "a_MS", "V_U_ref", "m_t")) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "acf_misc", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = acf_plot2)
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "acf2", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = acf_plot2)
     #Rhat plot
     stan_fit_coda <- stan2coda(stan_fit)
     pdf(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "Rhat", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"))
