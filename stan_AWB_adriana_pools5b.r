@@ -106,9 +106,9 @@ bayes_diagnostics = function(stan_fit, S_0, D_0, M_0, E_0, filename) {
     ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "trace_misc", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".png", sep = "_"), plot = trace_plot2)
     #Autocorrelation
     acf_plot1 <- mcmc_acf(stan_fit.array, pars = c("Ea_V", "Ea_VU", "Ea_K", "Ea_KU")) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "acf1", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = acf_plot1)
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "acf_Ea", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = acf_plot1)
     acf_plot2 <- mcmc_acf(stan_fit.array, pars = c("V_ref", "E_C_ref", "a_MS", "V_U_ref", "m_t")) + yaxis_text() + theme(axis.text = element_text(size = 16), axis.title = element_text(size = 20))
-    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "acf2", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = acf_plot2)
+    ggsave(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "acf_misc", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"), plot = acf_plot2)
     #Rhat plot
     stan_fit_coda <- stan2coda(stan_fit)
     pdf(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "Rhat", "S", S_0, "D", D_0, "M", M_0, "E", E_0, ".pdf", sep = "_"))
