@@ -166,7 +166,7 @@ theta[10] = a_MS;
 theta[11] = E_C_f;
 theta[12] = m_t;
 
-C_hat = integrate_ode_rk45(AWB_ODE, C_t0, t0, ts, theta, x_r, x_i);
+C_hat = integrate_ode_bdf(AWB_ODE, C_t0, t0, ts, theta, x_r, x_i);
 
 for (i in 1:N_t) {
   CO2_flux_hat[i] = ((V_U_f * C_hat[i,3] * C_hat[i,2]) / (K_U_f + C_hat[i,2])) * (1 - E_C_f);
@@ -254,19 +254,21 @@ E_C_ref ~ normal(0.4,0.2); // Reference CUE
 m_t ~ normal(0.002,0.001); // CUE slope
 a_MS ~ normal(0.5,0.25); // Fraction of dead MBC transferred to SOC
 
-sigma ~ cauchy(0,1);
+sigma ~ cauchy(0,1); // Residual error scale
 
 // likelihood
 CO2_flux_ratios_vector ~ normal(CO2_flux_ratios_hat_vector, sigma);
 }
 
 generated quantities{
-real log_lik;
+vector[N_t] log_lik;
 vector[N_t] CPOi; // Inverse CPO vector for LPML calculation
 real<lower=0> CO2_flux_ratios_p[N_p];
 vector[N_p] CO2_flux_ratios_new_vector; // Predictive time series vector
 
-log_lik = normal_lpdf(CO2_flux_ratios_vector | CO2_flux_ratios_hat_vector, sigma);
+for (i in 1:N_t) {
+  log_lik[i] = normal_lpdf(CO2_flux_ratios_vector[i] | CO2_flux_ratios_hat_vector[i], sigma);
+} // Log likelihood vector for LOO package processing
 CPOi = sqrt(2 * pi()) * sigma * exp(0.5 * (1 / sigma ^ 2) * square(CO2_flux_ratios_vector - CO2_flux_ratios_hat_vector));
 CO2_flux_ratios_p = model_ratios(N_p, t0, ts_p, V_ref, V_U_ref, Ea_V, Ea_VU, Ea_K, Ea_KU, E_C_ref, m_t, a_MS, x_r, x_i);
 // normal_rng cannot be vectorized
@@ -274,4 +276,3 @@ for (i in 1:N_p) {
   CO2_flux_ratios_new_vector[i] = normal_rng(CO2_flux_ratios_p[i], sigma);
 }
 }
-

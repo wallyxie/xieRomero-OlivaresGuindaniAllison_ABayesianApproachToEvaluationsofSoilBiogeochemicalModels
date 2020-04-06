@@ -139,14 +139,14 @@ CO2_flux_0 = k_S_ref * S_0 * (1 - a_SD) + k_D_ref * D_0 * (1 - a_DS) + k_M_ref *
 
 // print("CO2_flux_0 = ", CO2_flux_0);
 
-C_hat = integrate_ode_rk45(CON_ODE, C_t0, t0, ts, theta, x_r, x_i);
+C_hat = integrate_ode_bdf(CON_ODE, C_t0, t0, ts, theta, x_r, x_i);
 
 for (i in 1:N_t) {
   CO2_flux_hat[i] = k_S_f * C_hat[i,1] * (1 - a_SD) + k_D_f * C_hat[i,2] * (1 - a_DS) + k_M_f * C_hat[i,3] * (1 - a_M);
   CO2_flux_ratios_hat[i] = CO2_flux_hat[i] / CO2_flux_0;  
 }
 
-// print("CO2_flux_ratios_hat array = ", CO2_flux_ratios_hat);
+print("CO2_flux_ratios_hat array = ", CO2_flux_ratios_hat);
 
 return CO2_flux_ratios_hat;
 
@@ -226,12 +226,14 @@ CO2_flux_ratios_vector ~ normal(CO2_flux_ratios_hat_vector, sigma);
 }
 
 generated quantities{
-real log_lik;
+vector[N_t] log_lik;
 vector[N_t] CPOi; // Inverse CPO vector for LPML calculation
 real<lower=0> CO2_flux_ratios_p[N_p];
 vector[N_p] CO2_flux_ratios_new_vector; // Predictive time series vector
 
-log_lik = normal_lpdf(CO2_flux_ratios_vector | CO2_flux_ratios_hat_vector, sigma);
+for (i in 1:N_t) {
+  log_lik[i] = normal_lpdf(CO2_flux_ratios_vector[i] | CO2_flux_ratios_hat_vector[i], sigma);
+} // Log likelihood vector for LOO package processing
 CPOi = sqrt(2 * pi()) * sigma * exp(0.5 * (1 / sigma ^ 2) * square(CO2_flux_ratios_vector - CO2_flux_ratios_hat_vector));
 CO2_flux_ratios_p = model_ratios(N_p, t0, ts_p, Ea_S, Ea_D, Ea_M, a_DS, a_SD, a_M, a_MS, x_r, x_i);
 // normal_rng cannot be vectorized
@@ -239,4 +241,3 @@ for (i in 1:N_p) {
   CO2_flux_ratios_new_vector[i] = normal_rng(CO2_flux_ratios_p[i], sigma);
 }
 }
-

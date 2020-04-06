@@ -7,7 +7,7 @@ library(coda)
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
-filename = "CON_adriana_pools4pb"
+filename = "CON_adriana_pools5i"
 color_scheme_set("viridisA")
 
 #############
@@ -15,13 +15,12 @@ color_scheme_set("viridisA")
 #############
 
 #Save summary, sample parameters, and posteriors
-fit_summary = function(stan_fit, stan_fit_ex, S_0, D_0, M_0, filename) {
+fit_summary <- function(stan_fit, stan_fit_ex, S_0, D_0, M_0, filename) {
     #Posteriors
     write.csv(stan_fit_ex, file = paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "posteriors", "S", S_0, "D", D_0, "M", M_0, ".csv", sep = "_"))
     #Summary
     stan_fit_sum <- summary(stan_fit)$summary
-    stan_fit_sum_write <- stan_fit_sum[c("Ea_S", "Ea_D", "Ea_M", "a_DS", "a_SD", "a_M", "a_MS", "sigma"),
-                                 c("mean", "sd", "2.5%", "50%", "97.5%", "n_eff", "Rhat")]
+    stan_fit_sum_write <- stan_fit_sum[c("Ea_S", "Ea_D", "Ea_M", "a_DS", "a_SD", "a_M", "a_MS", "sigma"), c("mean", "sd", "2.5%", "50%", "97.5%", "n_eff", "Rhat")]
     write.csv(stan_fit_sum_write, file = paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "summary", "S", S_0, "D", D_0, "M", M_0, ".csv", sep = "_"))
     #Divergent Transitions
     div_trans <- sum(nuts_params(stan_fit, pars = "divergent__")$Value)
@@ -32,18 +31,22 @@ fit_summary = function(stan_fit, stan_fit_ex, S_0, D_0, M_0, filename) {
 }
 
 #IC calculations
-calc_ic = function(stan_fit, stan_fit_ex, S_0, D_0, M_0, filename) {
-    fit_log_lik = extract_log_lik(stan_fit)
-    #rel_n_eff <- relative_eff(exp(fit_log_lik))
-    #stan_fit_waic = waic(fit_log_lik, r_eff = rel_n_eff, cores = 2)
-    #stan_fit_loo = loo(fit_log_lik, r_eff = rel_n_eff, cores = 2)
-    stan_fit_waic = waic(fit_log_lik, cores = 2)
-    stan_fit_loo = loo(fit_log_lik, cores = 2)
-    LPML = sum(log(1 / colMeans(stan_fit_ex$CPOi)))
-    waic = stan_fit_waic$estimates["waic",]
-    p_waic = stan_fit_waic$estimates["p_waic",]
-    loo = stan_fit_loo$estimates["looic",]
-    p_loo = stan_fit_loo$estimates["p_loo",]
+calc_ic <- function(stan_fit, stan_fit_ex, S_0, D_0, M_0, filename) {
+    fit_log_lik <- extract_log_lik(stan_fit)
+    #r_eff <- relative_eff(exp(fit_log_lik), cores = 4)
+    stan_fit_waic <- waic(fit_log_lik, cores = 4)
+    stan_fit_loo <- loo(fit_log_lik, cores = 4)
+    LPML <- sum(log(1 / colMeans(stan_fit_ex$CPOi)))
+    waic <- stan_fit_waic$estimates["waic",]
+    p_waic <- stan_fit_waic$estimates["p_waic",]
+    loo <- stan_fit_loo$estimates["looic",]
+    p_loo <- stan_fit_loo$estimates["p_loo",]
+    sink(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "loo_print", "S", S_0, "D", D_0, "M", M_0, ".txt", sep = "_"))
+    print(stan_fit_loo)
+    sink()
+    sink(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "pareto-k", "S", S_0, "D", D_0, "M", M_0, ".txt", sep = "_"))
+    print(pareto_k_table(stan_fit_loo))
+    sink()
     sink(paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "ic", "S", S_0, "D", D_0, "M", M_0, ".txt", sep = "_"))    
     cat("WAIC = ", waic, "\nLOO = ", loo, "\nLPML = ", LPML, "\np_waic = ", p_waic, "\np_loo = ", p_loo)
     sink()    
@@ -55,8 +58,8 @@ stan2coda <- function(fit) {
     mcmc.list(lapply(1:ncol(fit), function(x) mcmc(as.array(fit)[,x,])))
 }
 
-#Diagnostics including posterior, traceplot, autocorrelation, and Rhat. Specific to CON because of parameters. Cannot copy-pate to other models
-bayes_diagnostics = function(stan_fit, S_0, D_0, M_0, filename) {
+#Diagnostics including posterior, traceplot, autocorrelation, and Rhat. Specific to CON because of parameters. Cannot copy-paste to other models
+bayes_diagnostics <- function(stan_fit, S_0, D_0, M_0, filename) {
     stan_fit.array <- as.array(stan_fit)
     stan_fit.np <- nuts_params(stan_fit)
     stan_fit.lp <- log_posterior(stan_fit)
@@ -106,8 +109,8 @@ calc_r <- function(model_vector, data_vector, S_0, D_0, M_0, filename) {
     sst_vector <- (data_vector - sst_mean) ^ 2
     sst <- sum(sst_vector)
     ssr_vector <- (data_vector - model_vector) ^ 2
-    ssr = sum(ssr_vector)
-    r_sq = 1 - (ssr / sst)
+    ssr <- sum(ssr_vector)
+    r_sq <- 1 - (ssr / sst)
     cat(r_sq, file = paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "r_sq", "S", S_0, "D", D_0, "M", M_0, ".txt", sep = "_"))
     return(r_sq)
 }
@@ -119,13 +122,13 @@ plot_fits <- function(stan_fit_ex, N_t, N_p, obs_times, pred_times, data_vector,
     CO2_flux_ratios_pred_median <- rep(NA, N_p)
     sigma_hat <- median(stan_fit_ex$sigma)    
     for (t in 1:N_t) {
-    CO2_flux_ratios_hat_median[t] <- median(stan_fit_ex$CO2_flux_ratios_hat_vector[,t])
+        CO2_flux_ratios_hat_median[t] <- median(stan_fit_ex$CO2_flux_ratios_hat_vector[,t])
     }
     for (t in 1:N_p) {
-    CO2_flux_ratios_pred_median[t] <- median(stan_fit_ex$CO2_flux_ratios_new_vector[,t])
+        CO2_flux_ratios_pred_median[t] <- median(stan_fit_ex$CO2_flux_ratios_new_vector[,t])
     }
     #Pearson's correlation calculation
-    r_sq = calc_r(CO2_flux_ratios_hat_median, data_vector, S_0, D_0, M_0, filename)
+    r_sq <- calc_r(CO2_flux_ratios_hat_median, data_vector, S_0, D_0, M_0, filename)
     #Plotting posterior fit
     df_post <- data.frame(list(obs_times = obs_times / (24 * 365), CO2_flux_ratios_vector = data_vector, CO2_flux_ratios_hat_median = CO2_flux_ratios_hat_median))
     post_plot <- ggplot(df_post, aes(x = obs_times)) +
@@ -156,7 +159,7 @@ plot_fits <- function(stan_fit_ex, N_t, N_p, obs_times, pred_times, data_vector,
 ##DATA##
 ########
 
-df = read.csv("adriana_data_s_min.csv",header=TRUE) #Read in data
+df <- read.csv("adriana_data_s_min.csv",header=TRUE) #Read in data
 hour_index_list <- df$Hours
 CO2_flux_ratios_vector <- df$Response_Ratio
 sd <- df$Standard_Deviation
@@ -194,7 +197,7 @@ CON_dat6 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_
 
 CON_dat7 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_07, D_0 = D_0, M_0 = M_0, u_M = u_M, k_M_ref = k_M_ref)
 
-file_path <- "CON_adriana_pools4.stan" #Read in Stan model code. Stan file must be in same directory.
+file_path <- "CON_adriana_pools5i.stan" #Read in Stan model code. Stan file must be in same directory.
 lines <- readLines(file_path, encoding = "ASCII")
 for (n in 1:length(lines)) cat(lines[n],'\n')
 
@@ -202,58 +205,66 @@ for (n in 1:length(lines)) cat(lines[n],'\n')
 ##EXECUTION##
 #############
 
-CON_fitTest <- stan("CON_adriana_pools4p1.stan", data = CON_dat1, iter = 45000, warmup = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
-CON_fitTest_ex = extract(CON_fitTest)
-CON_fitTest_ic = calc_ic(CON_fitTest, CON_fitTest_ex, 90, D_0, M_0, filename)
+CON_fitTest <- stan("CON_adriana_pools5i.stan", data = CON_dat1, iter = 200, refresh = 10, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 12))
+saveRDS(CON_fitTest, paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "stanfit", "S", 90, "D", D_0, "M", M_0, ".rds", sep = "_"))
+CON_fitTest_ex <- extract(CON_fitTest)
+CON_fitTest_ic <- calc_ic(CON_fitTest, CON_fitTest_ex, 90, D_0, M_0, filename)
 fit_summary(CON_fitTest, CON_fitTest_ex, 90, D_0, M_0, filename)
 bayes_diagnostics(CON_fitTest, 90, D_0, M_0, filename)
 plot_fits(CON_fitTest_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, 90, D_0, M_0, filename)
 
-CON_fit1 <- stan("CON_adriana_pools4p1.stan", data = CON_dat1, iter = 45000, warmup = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
-CON_fit1_ex = extract(CON_fit1)
-CON_fit1_ic = calc_ic(CON_fit1, CON_fit1_ex, S_01, D_0, M_0, filename)
+CON_fit1 <- stan("CON_adriana_pools5i.stan", data = CON_dat1, iter = 45000, warmup = 20000, refresh = 10, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 12))
+saveRDS(CON_fit1, paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "stanfit", "S", S_01, "D", D_0, "M", M_0, ".rds", sep = "_"))
+CON_fit1_ex <- extract(CON_fit1)
+CON_fit1_ic <- calc_ic(CON_fit1, CON_fit1_ex, S_01, D_0, M_0, filename)
 fit_summary(CON_fit1, CON_fit1_ex, S_01, D_0, M_0, filename)
 bayes_diagnostics(CON_fit1, S_01, D_0, M_0, filename)
 plot_fits(CON_fit1_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_01, D_0, M_0, filename)
 
-CON_fit2 <- stan("CON_adriana_pools4p1.stan", data = CON_dat2, iter = 45000, warmup = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
-CON_fit2_ex = extract(CON_fit2)
-CON_fit2_ic = calc_ic(CON_fit2, CON_fit2_ex, S_02, D_0, M_0, filename)
+CON_fit2 <- stan("CON_adriana_pools5i.stan", data = CON_dat2, iter = 45000, warmup = 20000, refresh = 10, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 12))
+saveRDS(CON_fit2, paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "stanfit", "S", S_02, "D", D_0, "M", M_0, ".rds", sep = "_"))
+CON_fit2_ex <- extract(CON_fit2)
+CON_fit2_ic <- calc_ic(CON_fit2, CON_fit2_ex, S_02, D_0, M_0, filename)
 fit_summary(CON_fit2, CON_fit2_ex, S_02, D_0, M_0, filename)
 bayes_diagnostics(CON_fit2, S_02, D_0, M_0, filename)
 plot_fits(CON_fit2_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_02, D_0, M_0, filename)
 
-CON_fit3 <- stan("CON_adriana_pools4p1.stan", data = CON_dat3, iter = 45000, warmup = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
-CON_fit3_ex = extract(CON_fit3)
-CON_fit3_ic = calc_ic(CON_fit3, CON_fit3_ex, S_03, D_0, M_0, filename)
+CON_fit3 <- stan("CON_adriana_pools5i.stan", data = CON_dat3, iter = 45000, warmup = 20000, refresh = 10, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 12))
+saveRDS(CON_fit3, paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "stanfit", "S", S_03, "D", D_0, "M", M_0, ".rds", sep = "_"))
+CON_fit3_ex <- extract(CON_fit3)
+CON_fit3_ic <- calc_ic(CON_fit3, CON_fit3_ex, S_03, D_0, M_0, filename)
 fit_summary(CON_fit3, CON_fit3_ex, S_03, D_0, M_0, filename)
 bayes_diagnostics(CON_fit3, S_03, D_0, M_0, filename)
 plot_fits(CON_fit3_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_03, D_0, M_0, filename)
 
-CON_fit4 <- stan("CON_adriana_pools4p1.stan", data = CON_dat4, iter = 45000, warmup = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
-CON_fit4_ex = extract(CON_fit4)
-CON_fit4_ic = calc_ic(CON_fit4, CON_fit4_ex, S_04, D_0, M_0, filename)
+CON_fit4 <- stan("CON_adriana_pools5i.stan", data = CON_dat4, iter = 45000, warmup = 20000, refresh = 10, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 12))
+saveRDS(CON_fit4, paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "stanfit", "S", S_04, "D", D_0, "M", M_0, ".rds", sep = "_"))
+CON_fit4_ex <- extract(CON_fit4)
+CON_fit4_ic <- calc_ic(CON_fit4, CON_fit4_ex, S_04, D_0, M_0, filename)
 fit_summary(CON_fit4, CON_fit4_ex, S_04, D_0, M_0, filename)
 bayes_diagnostics(CON_fit4, S_04, D_0, M_0, filename)
 plot_fits(CON_fit4_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_04, D_0, M_0, filename)
 
-CON_fit5 <- stan("CON_adriana_pools4p1.stan", data = CON_dat5, iter = 45000, warmup = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
-CON_fit5_ex = extract(CON_fit5)
-CON_fit5_ic = calc_ic(CON_fit5, CON_fit5_ex, S_05, D_0, M_0, filename)
+CON_fit5 <- stan("CON_adriana_pools5i.stan", data = CON_dat5, iter = 45000, warmup = 20000, refresh = 10, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 12))
+saveRDS(CON_fit5, paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "stanfit", "S", S_05, "D", D_0, "M", M_0, ".rds", sep = "_"))
+CON_fit5_ex <- extract(CON_fit5)
+CON_fit5_ic <- calc_ic(CON_fit5, CON_fit5_ex, S_05, D_0, M_0, filename)
 fit_summary(CON_fit5, CON_fit5_ex, S_05, D_0, M_0, filename)
 bayes_diagnostics(CON_fit5, S_05, D_0, M_0, filename)
 plot_fits(CON_fit5_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_05, D_0, M_0, filename)
 
-CON_fit6 <- stan("CON_adriana_pools4p1.stan", data = CON_dat6, iter = 45000, warmup = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
-CON_fit6_ex = extract(CON_fit6)
-CON_fit6_ic = calc_ic(CON_fit6, CON_fit6_ex, S_06, D_0, M_0, filename)
+CON_fit6 <- stan("CON_adriana_pools5i.stan", data = CON_dat6, iter = 45000, warmup = 20000, refresh = 10, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 12))
+saveRDS(CON_fit6, paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "stanfit", "S", S_06, "D", D_0, "M", M_0, ".rds", sep = "_"))
+CON_fit6_ex <- extract(CON_fit6)
+CON_fit6_ic <- calc_ic(CON_fit6, CON_fit6_ex, S_06, D_0, M_0, filename)
 fit_summary(CON_fit6, CON_fit6_ex, S_06, D_0, M_0, filename)
 bayes_diagnostics(CON_fit6, S_06, D_0, M_0, filename)
 plot_fits(CON_fit6_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_06, D_0, M_0, filename)
 
-CON_fit7 <- stan("CON_adriana_pools4p1.stan", data = CON_dat7, iter = 45000, warmup = 20000, refresh = 1, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.9995, stepsize = 0.001, max_treedepth = 15))
-CON_fit7_ex = extract(CON_fit7)
-CON_fit7_ic = calc_ic(CON_fit7, CON_fit7_ex, S_07, D_0, M_0, filename)
+CON_fit7 <- stan("CON_adriana_pools5i.stan", data = CON_dat7, iter = 45000, warmup = 20000, refresh = 10, chains = 4, seed = 1234, open_progress = "False", control = list(adapt_delta = 0.99, stepsize = 0.01, max_treedepth = 12))
+saveRDS(CON_fit7, paste(format(Sys.time(),"%Y_%m_%d_%H_%M"), filename, "stanfit", "S", S_07, "D", D_0, "M", M_0, ".rds", sep = "_"))
+CON_fit7_ex <- extract(CON_fit7)
+CON_fit7_ic <- calc_ic(CON_fit7, CON_fit7_ex, S_07, D_0, M_0, filename)
 fit_summary(CON_fit7, CON_fit7_ex, S_07, D_0, M_0, filename)
 bayes_diagnostics(CON_fit7, S_07, D_0, M_0, filename)
 plot_fits(CON_fit7_ex, N_t = N_t, N_p = N_p, obs_times = hour_index_list, pred_times = ts_p, data_vector = CO2_flux_ratios_vector, S_07, D_0, M_0, filename)
