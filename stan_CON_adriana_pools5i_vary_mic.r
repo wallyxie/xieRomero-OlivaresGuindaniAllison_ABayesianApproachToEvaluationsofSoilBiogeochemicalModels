@@ -199,7 +199,7 @@ CON_dat5 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_
 
 CON_dat6 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_0, D_0 = D_0, M_0 = M_06, u_M = u_M, k_M_ref = k_M_ref6)
 
-CON_dat8 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_0, D_0 = D_0, M_0 = M_06, u_M = u_M, k_M_ref = k_M_ref8)
+CON_dat8 <- list(N_t = N_t, N_p = N_p, t0 = t0, ts = hour_index_list, ts_p = ts_p, CO2_flux_ratios_vector = CO2_flux_ratios_vector, SOC_input = mean_SOC_input, DOC_input = mean_DOC_input, T_ref = T_ref, R_g = R_g, S_0 = S_0, D_0 = D_0, M_0 = M_08, u_M = u_M, k_M_ref = k_M_ref8)
 
 file_path <- "CON_adriana_pools5i.stan" #Read in Stan model code. Stan file must be in same directory.
 lines <- readLines(file_path, encoding = "ASCII")
